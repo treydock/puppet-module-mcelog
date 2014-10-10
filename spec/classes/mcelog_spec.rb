@@ -83,7 +83,45 @@ describe 'mcelog', :type => :class do
           end
         end # []
       end # config_file_template =>
+
+      context 'ensure => absent' do
+        let(:params) {{ :ensure => 'absent' }}
+
+        it { should contain_package('mcelog').with_ensure('absent') }
+        it { should contain_file('mcelog.conf').with_ensure('absent') }
+        it do
+          should contain_service('mcelog').with({
+            :ensure => 'stopped',
+            :enable => 'false',
+          })
+        end
+      end # ensure =>
     end # EL6.x
+
+    context 'EL7.x' do
+      before { facts[:operatingsystemmajrelease] = '7' }
+
+      it { should contain_package('mcelog').with_ensure('present') }
+      it do
+        should contain_file('mcelog.conf').with({
+          :ensure  => 'file',
+          :path    => '/etc/mcelog/mcelog.conf',
+          :owner   => 'root',
+          :group   => 'root',
+          :mode    => '0644',
+          :content => /^daemon = yes$/,
+        })
+      end
+      it do
+        should contain_service('mcelog').with({
+          :ensure     => 'running',
+          :name       => 'mcelogd',
+          :hasstatus  => true,
+          :hasrestart => true,
+          :enable     => true,
+        })
+      end
+    end # EL7.x
 
     context 'unsupport operatingsystemmajrelease' do
       before { facts[:operatingsystemmajrelease] = '4' }
