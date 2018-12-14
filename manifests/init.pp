@@ -1,30 +1,29 @@
 class mcelog (
-  $ensure = 'present',
-  $config_file_template = $::mcelog::params::config_file_template,
+  Enum['present','absent'] $ensure = 'present',
+  Hash $settings = {},
+  Optional[Enum['running','stopped']] $service_ensure = undef,
 ) inherits mcelog::params {
-  validate_re($ensure, ['^present$', '^absent$'])
-  validate_string($config_file_template)
-
   case $ensure {
     'present': {
       $package_ensure = 'present'
       $file_ensure    = 'file'
-      $service_ensure = 'running'
+      $_service_ensure = pick($service_ensure, 'running')
       $service_enable = true
     }
     'absent': {
       $package_ensure = 'absent'
       $file_ensure    = 'absent'
-      $service_ensure = 'stopped'
+      $_service_ensure = pick($service_ensure, 'stopped')
       $service_enable = false
     }
     default: {
-      fail("Module ${module_name}: Ensure parameter must be 'present' or 'absent', ${ensure} given.")
+      # Do nothing
     }
   }
 
-  package { $::mcelog::params::package_name:
+  package { 'mcelog':
     ensure => $package_ensure,
+    name   => $::mcelog::params::package_name,
     before => File['mcelog.conf'],
   }
 
@@ -34,16 +33,23 @@ class mcelog (
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    content => template($config_file_template),
+    notify  => Service['mcelog'],
   }
 
-  if $mcelog::params::service_manage {
-    service { 'mcelog':
-      ensure     => $service_ensure,
-      name       => $::mcelog::params::service_name,
-      hasstatus  => true,
-      hasrestart => true,
-      enable     => $service_enable,
-    }
+  $mcelog_ini_defaults = {
+    'path'    => $::mcelog::params::config_file_path,
+    'require' => Package['mcelog'],
+    'notify'  => Service['mcelog'],
+  }
+  if $ensure == 'present' {
+    create_ini_settings($settings, $mcelog_ini_defaults)
+  }
+
+  service { 'mcelog':
+    ensure     => $_service_ensure,
+    enable     => $service_enable,
+    name       => $::mcelog::params::service_name,
+    hasstatus  => true,
+    hasrestart => true,
   }
 }

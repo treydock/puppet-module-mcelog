@@ -1,88 +1,90 @@
 require 'spec_helper'
 
-describe 'mcelog', :type => :class do
+describe 'mcelog' do
+  on_supported_os.each do |os, facts|
+    context "on #{os}" do
+      let(:facts) do
+        facts
+      end
 
-  context 'osfamily RedHat' do
-    let(:facts) {{
-      :architecture => 'x86_64',
-      :osfamily     => 'RedHat',
-    }}
+      if facts[:os]['release']['major'] == 6
+        service_name = 'mcelogd'
+      else
+        service_name = 'mcelog'
+      end
 
-    context 'EL5.x' do
-      before { facts[:operatingsystemmajrelease] = '5' }
+      it { is_expected.to compile.with_all_deps }
 
-      it { should contain_package('mcelog').with_ensure('present') }
+      it { is_expected.to create_class('mcelog') }
+      it { is_expected.to contain_class('mcelog::params') }
+      
       it do
-        should contain_file('mcelog.conf').with({
-          :ensure  => 'file',
-          :path    => '/etc/mcelog.conf',
-          :owner   => 'root',
-          :group   => 'root',
-          :mode    => '0644',
-          :content => /^daemon = yes$/,
+        is_expected.to contain_package('mcelog').with({
+          :ensure => 'present',
+          :name   => 'mcelog',
+          :before => 'File[mcelog.conf]',
         })
       end
-      it { should_not contain_service('mcelog') }
-    end # EL5.x
 
-    context 'EL6.x' do
-      before { facts[:operatingsystemmajrelease] = '6' }
-
-      it { should contain_package('mcelog').with_ensure('present') }
       it do
-        should contain_file('mcelog.conf').with({
+        is_expected.to contain_file('mcelog.conf').with({
           :ensure  => 'file',
           :path    => '/etc/mcelog/mcelog.conf',
           :owner   => 'root',
           :group   => 'root',
           :mode    => '0644',
-          :content => /^daemon = yes$/,
+          :notify  => 'Service[mcelog]',
         })
       end
+
+      it { is_expected.to have_ini_setting_resource_count(0) }
+
       it do
-        should contain_service('mcelog').with({
+        is_expected.to contain_service('mcelog').with({
           :ensure     => 'running',
-          :name       => 'mcelogd',
-          :hasstatus  => true,
-          :hasrestart => true,
-          :enable     => true,
+          :enable     => 'true',
+          :name       => service_name,
+          :hasstatus  => 'true',
+          :hasrestart => 'true',
         })
       end
 
-      context 'config_file_template =>' do
-        context 'mcelog/mcelog.conf.erb' do
-          let(:params) {{ :config_file_template => 'mcelog/mcelog.conf.erb' }}
+      context 'settings defined' do
+        let(:params) do
+          {
+            :settings => {
+              '' => { 'filter' => 'yes' },
+              'server' => {'client-user' => 'root' },
+            },
+          }
+        end
 
-          it do
-            should contain_file('mcelog.conf').with({
-              :ensure  => 'file',
-              :path    => '/etc/mcelog/mcelog.conf',
-              :owner   => 'root',
-              :group   => 'root',
-              :mode    => '0644',
-              :content => /^daemon = yes$/,
-            })
-          end
-        end # mcelog/mcelog.conf.erb
+        it { is_expected.to have_ini_setting_resource_count(2) }
 
-        context 'dne/dne.erb' do
-          let(:params) {{ :config_file_template => 'dne/dne.erb' }}
+        it do
+          is_expected.to contain_ini_setting('/etc/mcelog/mcelog.conf [] filter').with({
+            :ensure  => 'present',
+            :section => '',
+            :setting => 'filter',
+            :value   => 'yes',
+            :path    => '/etc/mcelog/mcelog.conf',
+            :require => 'Package[mcelog]',
+            :notify  => 'Service[mcelog]',
+          })
+        end
 
-          it 'should fail' do
-            expect { should contain_class('mcelog::params') }.
-              to raise_error(Puppet::Error, /Could not find template 'dne\/dne.erb'/)
-          end
-        end # dne/dne.erb
-
-        context '[]' do
-          let(:params) {{ :config_file_template => [] }}
-
-          it 'should fail' do
-            expect { should contain_class('mcelog::params') }.
-              to raise_error(Puppet::Error, /is not a string/)
-          end
-        end # []
-      end # config_file_template =>
+        it do
+          is_expected.to contain_ini_setting('/etc/mcelog/mcelog.conf [server] client-user').with({
+            :ensure  => 'present',
+            :section => 'server',
+            :setting => 'client-user',
+            :value   => 'root',
+            :path    => '/etc/mcelog/mcelog.conf',
+            :require => 'Package[mcelog]',
+            :notify  => 'Service[mcelog]',
+          })
+        end
+      end
 
       context 'ensure => absent' do
         let(:params) {{ :ensure => 'absent' }}
@@ -95,69 +97,7 @@ describe 'mcelog', :type => :class do
             :enable => 'false',
           })
         end
-      end # ensure =>
-    end # EL6.x
-
-    context 'EL7.x' do
-      before { facts[:operatingsystemmajrelease] = '7' }
-
-      it { should contain_package('mcelog').with_ensure('present') }
-      it do
-        should contain_file('mcelog.conf').with({
-          :ensure  => 'file',
-          :path    => '/etc/mcelog/mcelog.conf',
-          :owner   => 'root',
-          :group   => 'root',
-          :mode    => '0644',
-          :content => /^daemon = yes$/,
-        })
       end
-      it do
-        should contain_service('mcelog').with({
-          :ensure     => 'running',
-          :name       => 'mcelogd',
-          :hasstatus  => true,
-          :hasrestart => true,
-          :enable     => true,
-        })
-      end
-    end # EL7.x
-
-    context 'unsupport operatingsystemmajrelease' do
-      before { facts[:operatingsystemmajrelease] = '4' }
-
-      it 'should fail' do
-        expect { should contain_class('mcelog::params') }.
-          to raise_error(Puppet::Error, /not supported on operatingsystemmajrelease: 4/)
-      end
-    end # EL4.x
-  end # osfamily RedHat
-
-  context 'unsupported architecture' do
-    let :facts do
-      {
-        :architecture => 'i386',
-        :osfamily     => 'RedHat',
-      }
     end
-
-    it 'should fail' do
-      expect { should contain_class('mcelog::params') }.
-        to raise_error(Puppet::Error, /not supported on architecture: i386/)
-    end
-  end # unsupported architecture
-
-  context 'unsupported osfamily' do
-    let :facts do
-      {
-        :architecture => 'x86_64',
-        :osfamily     => 'Solaris',
-      }
-    end
-
-    it 'should fail' do
-      expect { should contain_class('mcelog::params') }.
-        to raise_error(Puppet::Error, /not supported on osfamily: Solaris/)
-    end
-  end # unsupported osfamily
+  end
 end

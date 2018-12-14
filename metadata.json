@@ -1,0 +1,51 @@
+{
+  "name": "treydock-mcelog",
+  "version": "0.1.0",
+  "author": "treydock",
+  "summary": "Manages the mcelog utility for x86-64 CPU Machine Check Exception data",
+  "license": "Apache-2.0",
+  "source": "",
+  "dependencies": [
+    { "name": "puppetlabs/stdlib", "version_requirement": ">= 4.13.1 <6.0.0" },
+    { "name": "puppetlabs/inifile", "version_requirement": ">= 1.6.0 <3.0.0" }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 5.0.0 < 7.0.0"
+    }
+  ],
+  "pdk-version": "1.8.0",
+  "template-url": "file:///Users/tdockendorf/git/pdk-templates",
+  "template-ref": "heads/master-0-g9c4dd87"
+}
