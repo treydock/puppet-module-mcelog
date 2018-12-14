@@ -13,7 +13,7 @@ class mcelog::params {
   }
   case $::osfamily {
     'RedHat': {
-      if $facts['os']['release']['major'] == 6 {
+      if Integer($facts['os']['release']['major']) == 6 {
         $service_name = 'mcelogd'
       } else {
         $service_name = 'mcelog'

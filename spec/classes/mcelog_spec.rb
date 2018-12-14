@@ -7,7 +7,7 @@ describe 'mcelog' do
         facts
       end
 
-      service_name = if facts[:os]['release']['major'] == 6
+      service_name = if facts[:os]['release']['major'] == '6'
                        'mcelogd'
                      else
                        'mcelog'
