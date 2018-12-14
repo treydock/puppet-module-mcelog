@@ -1,4 +1,8 @@
 ---
+.travis.yml:
+  docker_sets:
+    - set: centos-7
+    - set: centos-6
 appveyor.yml:
   delete: true
 spec/acceptance/nodesets/debian-8.yml:
