@@ -1,3 +1,17 @@
+# @summary Manage mcelog
+#
+# @example
+#   include ::mcelog
+#
+# @param ensure
+#   Defines state of mcelog. Setting to `absent` will completely remove mcelog
+# @param settings
+#   Settings hash to be passed to `mcelog.conf` INI file.
+#   Keys are the section in `mcelog.log` and empty key is global settings
+#   The values are key/value pairs of setting and value under a given section.
+# @param service_ensure
+#   Service `ensure` value.  Default is based on `ensure` parameter value.
+#
 class mcelog (
   Enum['present','absent'] $ensure = 'present',
   Hash $settings = {},

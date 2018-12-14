@@ -1,3 +1,4 @@
+# @api private
 class mcelog::params {
   $package_name         = 'mcelog'
   $config_file_path     = '/etc/mcelog/mcelog.conf'
