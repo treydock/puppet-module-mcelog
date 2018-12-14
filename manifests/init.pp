@@ -42,12 +42,12 @@ class mcelog (
   }
 
   file { 'mcelog.conf':
-    ensure  => $file_ensure,
-    path    => $::mcelog::params::config_file_path,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    notify  => Service['mcelog'],
+    ensure => $file_ensure,
+    path   => $::mcelog::params::config_file_path,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0644',
+    notify => Service['mcelog'],
   }
 
   $mcelog_ini_defaults = {
