@@ -53,7 +53,7 @@
       "version_requirement": ">= 5.0.0 < 7.0.0"
     }
   ],
-  "pdk-version": "1.8.0",
-  "template-url": "file:///Users/tdockendorf/git/pdk-templates",
-  "template-ref": "heads/master-0-g4080534"
+  "pdk-version": "1.10.0",
+  "template-url": "https://github.com/treydock/pdk-templates.git#master",
+  "template-ref": "1.10.0-0-gbba9ac3"
 }
