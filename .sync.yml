@@ -1,26 +1,15 @@
 ---
-.travis.yml:
-  deploy: false
-  docker_sets:
-    - set: centos-7
-      collection: puppet5
-    - set: centos-7
-      collection: puppet6
-    - set: centos-6
-      collection: puppet5
-    - set: centos-6
-      collection: puppet6
 .gitlab-ci.yml:
   delete: true
 appveyor.yml:
   delete: true
-spec/acceptance/nodesets/debian-8.yml:
+spec/acceptance/nodesets/debian-11.yml:
   delete: true
-spec/acceptance/nodesets/debian-9.yml:
+spec/acceptance/nodesets/debian-12.yml:
   delete: true
-spec/acceptance/nodesets/ubuntu-1404.yml:
+spec/acceptance/nodesets/ubuntu-2004.yml:
   delete: true
-spec/acceptance/nodesets/ubuntu-1604.yml:
+spec/acceptance/nodesets/ubuntu-2204.yml:
   delete: true
-spec/acceptance/nodesets/ubuntu-1804.yml:
+spec/acceptance/nodesets/ubuntu-2404.yml:
   delete: true

@@ -37,13 +37,13 @@ class mcelog (
 
   package { 'mcelog':
     ensure => $package_ensure,
-    name   => $::mcelog::params::package_name,
+    name   => $mcelog::params::package_name,
     before => File['mcelog.conf'],
   }
 
   file { 'mcelog.conf':
     ensure => $file_ensure,
-    path   => $::mcelog::params::config_file_path,
+    path   => $mcelog::params::config_file_path,
     owner  => 'root',
     group  => 'root',
     mode   => '0644',
@@ -51,7 +51,7 @@ class mcelog (
   }
 
   $mcelog_ini_defaults = {
-    'path'    => $::mcelog::params::config_file_path,
+    'path'    => $mcelog::params::config_file_path,
     'require' => Package['mcelog'],
     'notify'  => Service['mcelog'],
   }
@@ -62,7 +62,7 @@ class mcelog (
   service { 'mcelog':
     ensure     => $_service_ensure,
     enable     => $service_enable,
-    name       => $::mcelog::params::service_name,
+    name       => $mcelog::params::service_name,
     hasstatus  => true,
     hasrestart => true,
   }
