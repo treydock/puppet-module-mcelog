@@ -1,7 +1,7 @@
 # puppet-module-mcelog
 
 [![Puppet Forge](http://img.shields.io/puppetforge/v/treydock/mcelog.svg)](https://forge.puppetlabs.com/treydock/mcelog)
-[![Build Status](https://travis-ci.org/treydock/puppet-module-mcelog.svg?branch=master)](https://travis-ci.org/treydock/puppet-module-mcelog)
+[![CI Status](https://github.com/treydock/puppet-module-mcelog/workflows/CI/badge.svg?branch=master)](https://github.com/treydock/puppet-module-mcelog/actions?query=workflow%3ACI)
 
 1. [Overview](#overview)
 2. [Usage - Configuration options](#usage)

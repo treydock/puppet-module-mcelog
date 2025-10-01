@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'mcelog' do
   on_supported_os.each do |os, facts|
-    context "on #{os}" do
+    context "when #{os}" do
       let(:facts) do
         facts
       end
@@ -49,7 +51,7 @@ describe 'mcelog' do
         )
       end
 
-      context 'settings defined' do
+      context 'with settings defined' do
         let(:params) do
           {
             settings: {
@@ -86,11 +88,12 @@ describe 'mcelog' do
         end
       end
 
-      context 'ensure => absent' do
+      context 'with ensure => absent' do
         let(:params) { { ensure: 'absent' } }
 
         it { is_expected.to contain_package('mcelog').with_ensure('absent') }
         it { is_expected.to contain_file('mcelog.conf').with_ensure('absent') }
+
         it do
           is_expected.to contain_service('mcelog').with(
             ensure: 'stopped',

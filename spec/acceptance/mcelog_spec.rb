@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'mcelog class:' do
   context 'with default parameters' do
     it 'run successfully' do
-      pp = <<-EOS
+      pp = <<-PP
       class { '::mcelog':
         service_ensure => 'stopped',
       }
-      EOS
+      PP
 
       apply_manifest(pp, catch_failures: true)
       apply_manifest(pp, catch_changes: true)
@@ -32,11 +34,11 @@ describe 'mcelog class:' do
 
   context 'with ensure => absent' do
     it 'run successfully' do
-      pp = <<-EOS
+      pp = <<-PP
       class { '::mcelog':
         ensure => 'absent',
       }
-      EOS
+      PP
 
       apply_manifest(pp, catch_failures: true)
       apply_manifest(pp, catch_changes: true)
